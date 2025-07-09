@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: nutv-redirect
+    env: php
+    plan: free
+    buildCommand: ""
+    startCommand: ""
+    rootDir: .

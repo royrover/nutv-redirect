@@ -1,3 +1,1 @@
-<?php
-echo "✅ NUtv Redirect is working.";
-?>
+<?php echo "Hello from public/index.php"; ?>

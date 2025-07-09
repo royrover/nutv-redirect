@@ -1,0 +1,11 @@
+# Ignore common PHP files
+*.log
+*.sql
+*.sqlite
+/vendor/
+/node_modules/
+/.env
+.DS_Store
+.idea/
+*.bak
+*.swp

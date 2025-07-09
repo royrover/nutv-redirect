@@ -1,9 +1,9 @@
 <?php
+// redirect.php
+
 $slug = $_GET['slug'] ?? '';
 $token = $_GET['token'] ?? '';
 $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
-$referer = $_SERVER['HTTP_REFERER'] ?? '';
-$headerNUtvToken = $_SERVER['HTTP_X_NUTV_TOKEN'] ?? '';
 
 // ตรวจสอบ slug และ token เบื้องต้น
 if (!$slug || !$token) {
@@ -11,53 +11,49 @@ if (!$slug || !$token) {
     exit;
 }
 
-// ตัวอย่าง mock DB พร้อมวันที่หมดอายุ token
+// ตัวอย่าง mock database
 $links = [
     "GBbNEgq7" => [
         "token" => "9TFIkdu2K2zg",
-        "expires" => strtotime('2025-12-31'),
-        "final_url" => "https://dropbox.link/..."
+        "final_url" => "https://www.dropbox.com/scl/fi/a8tbr4z81su1f56ghgxlf/GBbNEgqz.json?rlkey=vrz84m15lt8ydjs8qzdcxzecz&raw=1"
     ]
 ];
 
-// เช็ค slug token
+// เช็ค slug และ token
 if (!isset($links[$slug]) || $links[$slug]['token'] !== $token) {
     http_response_code(403);
     exit;
 }
 
-// เช็ควันหมดอายุ token
-if (time() > $links[$slug]['expires']) {
-    http_response_code(403);
-    exit;
-}
+// รายชื่อ User-Agent ที่อนุญาต (แอป IPTV ยอดนิยม)
+$allowedAgents = [
+    'Wiseplay',
+    'Wiseplay/2.0',
+    'VLC',
+    'Kodi',
+    'IPTV',
+    'ExoPlayer',
+];
 
-// เช็ค User-Agent whitelist (แอป IPTV)
-$allowedAgents = ['Wiseplay', 'VLC', 'Kodi', 'IPTV', 'ExoPlayer'];
-$isAllowedAgent = false;
+// ตรวจสอบ User-Agent ว่าอยู่ในรายชื่ออนุญาตหรือไม่
+$isAllowed = false;
 foreach ($allowedAgents as $agent) {
     if (stripos($userAgent, $agent) !== false) {
-        $isAllowedAgent = true;
+        $isAllowed = true;
         break;
     }
 }
 
-// เช็ค Referer (ถ้าเปิดจาก browser ให้ redirect Google)
+// ตรวจสอบว่า User-Agent เป็น browser ทั่วไปหรือไม่
 $isBrowser = preg_match('/Chrome|Safari|Firefox|Edg|Opera|Mozilla/i', $userAgent);
 
-if ($isBrowser || !$isAllowedAgent) {
-    // ไม่ผ่านเงื่อนไข ให้ไป Google
+// ถ้าเป็น browser หรือ User-Agent ไม่อนุญาตให้ redirect ไป Google
+if ($isBrowser || !$isAllowed) {
     header("Location: https://www.google.com");
     exit;
 }
 
-// (ถ้าอยากตรวจ header ลับ)
-if ($headerNUtvToken !== 'your_secret_token_here') {
-    http_response_code(403);
-    exit;
-}
-
-// redirect สู่ final url
+// ถ้า User-Agent ผ่าน และ token ถูกต้อง ให้ redirect ไปลิงก์จริง
 header("Location: " . $links[$slug]['final_url']);
 exit;
 ?>

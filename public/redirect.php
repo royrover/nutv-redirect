@@ -14,7 +14,7 @@ if (!$slug || !$token) {
 $links = [
     "GBbNEgq7" => [
         "token" => "9TFIkdu2K2zg",
-        "final_url" => "https://www.dropbox.com/scl/fi/a8tbr4z81su1f56ghgxlf/GBbNEgq7.json?rlkey=...&raw=1"
+        "final_url" => "https://www.dropbox.com/scl/fi/a8tbr4z81su1f56ghgxlf/GBbNEgq7.json?rlkey=vrz84m15lt8ydjs8qzdcxzecz&st=o327g1n7&raw=1"
     ]
 ];
 

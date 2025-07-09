@@ -5,13 +5,13 @@ $slug = $_GET['slug'] ?? '';
 $token = $_GET['token'] ?? '';
 $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
-// ตรวจสอบ slug และ token เบื้องต้น
+// ✅ ตรวจสอบ slug และ token
 if (!$slug || !$token) {
     http_response_code(400);
     exit;
 }
 
-// ตัวอย่าง mock database
+// ✅ mock database
 $links = [
     "GBbNEgq7" => [
         "token" => "9TFIkdu2K2zg",
@@ -19,23 +19,22 @@ $links = [
     ]
 ];
 
-// เช็ค slug และ token
+// ✅ ตรวจสอบ slug และ token
 if (!isset($links[$slug]) || $links[$slug]['token'] !== $token) {
     http_response_code(403);
     exit;
 }
 
-// รายชื่อ User-Agent ที่อนุญาต (แอป IPTV ยอดนิยม)
+// ✅ รายชื่อ User-Agent ที่อนุญาต (แอป IPTV)
 $allowedAgents = [
     'Wiseplay',
-    'Wiseplay/2.0',
     'VLC',
     'Kodi',
     'IPTV',
     'ExoPlayer',
 ];
 
-// ตรวจสอบ User-Agent ว่าอยู่ในรายชื่ออนุญาตหรือไม่
+// ✅ ตรวจว่า User-Agent อยู่ใน whitelist หรือไม่
 $isAllowed = false;
 foreach ($allowedAgents as $agent) {
     if (stripos($userAgent, $agent) !== false) {
@@ -44,16 +43,14 @@ foreach ($allowedAgents as $agent) {
     }
 }
 
-// ตรวจสอบว่า User-Agent เป็น browser ทั่วไปหรือไม่
+// ✅ ถ้าไม่ใช่แอปที่ whitelist หรือเป็น Browser → ส่งไป Google
 $isBrowser = preg_match('/Chrome|Safari|Firefox|Edg|Opera|Mozilla/i', $userAgent);
-
-// ถ้าเป็น browser หรือ User-Agent ไม่อนุญาตให้ redirect ไป Google
 if ($isBrowser || !$isAllowed) {
     header("Location: https://www.google.com");
     exit;
 }
 
-// ถ้า User-Agent ผ่าน และ token ถูกต้อง ให้ redirect ไปลิงก์จริง
+// ✅ redirect ไปยังลิงก์ Dropbox จริง
 header("Location: " . $links[$slug]['final_url']);
 exit;
 ?>

@@ -1,16 +1,16 @@
 <?php
+// redirect.php
+
 $slug = $_GET['slug'] ?? '';
 $token = $_GET['token'] ?? '';
 
-// ตรวจสอบว่า slug กับ token ถูกส่งมา
+// ❌ ตรวจไม่ผ่าน → ส่ง HTTP code อย่างเดียว ไม่มี echo ใด ๆ
 if (!$slug || !$token) {
     http_response_code(400);
-    echo "❌ Missing slug or token.";
     exit;
 }
 
-// ดึงจากฐานข้อมูล หรือเขียน mock ไว้ก่อน
-// ตัวอย่างชั่วคราว
+// 🔒 mock database
 $links = [
     "GBbNEgq7" => [
         "token" => "9TFIkdu2K2zg",
@@ -18,18 +18,19 @@ $links = [
     ]
 ];
 
+// ❌ slug ไม่พบ
 if (!isset($links[$slug])) {
     http_response_code(404);
-    echo "❌ Slug not found.";
     exit;
 }
 
+// ❌ token ไม่ถูกต้อง
 if ($links[$slug]['token'] !== $token) {
     http_response_code(403);
-    echo "❌ Invalid token.";
     exit;
 }
 
+// ✅ redirect โดยไม่ echo อะไรเลย
 header("Location: " . $links[$slug]['final_url']);
 exit;
 ?>
